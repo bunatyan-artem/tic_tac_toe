@@ -1,11 +1,11 @@
 package main;
 
+import java.net.SocketException;
 import java.util.Scanner;
-
 import static main.Board.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SocketException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
 
         boolean game_over_flag, p1_moves_first = false;
