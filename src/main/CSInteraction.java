@@ -6,7 +6,7 @@ import java.net.Socket;
 class CSInteraction extends Thread{
 
     String name;
-    private final BufferedReader in;
+    final BufferedReader in;
     private final BufferedWriter out;
     boolean inGame = false;
     boolean invite_flag = false;
@@ -69,7 +69,7 @@ class CSInteraction extends Thread{
         this.send("List of players:");
         String s = "";
         for(CSInteraction usr: Server.serverList) {
-            if(usr == this) continue;
+            if(usr == this || usr.name == null) continue;
             s += usr.name;
             if(usr.inGame)
                 s += "(in game) ";
@@ -81,7 +81,8 @@ class CSInteraction extends Thread{
 
     private static void sendListsOfPlayers(){
         for(CSInteraction usr: Server.serverList)
-            usr.sendListOfPlayers();
+            if(usr.name != null && !usr.inGame)
+                usr.sendListOfPlayers();
     }
 
     static CSInteraction usrFromName(final String name){
@@ -128,8 +129,6 @@ class CSInteraction extends Thread{
 
         if(s.equals("n")){
             p1.send(p2.name + " refused yor invite");
-            p1.sendListOfPlayers();
-            p2.sendListOfPlayers();
             return;
         }
         else if(p1.inGame) {
@@ -144,18 +143,10 @@ class CSInteraction extends Thread{
         do {
             new Game(p1, p2, p1_first_move);
 
-            while(p1.inGame)
-                Thread.sleep(100);
-            p1.inGame = true;
-
-            System.out.println("1");
             s = p1.in.readLine();
-            System.out.println("2");
             s2 = p2.in.readLine();
-            System.out.println("3");
             p1_first_move = !p1_first_move;
         } while(s.equals("y") && s2.equals("y") && !p1.leave_flag && !p2.leave_flag);
-        System.out.println(s + " " + s2);
         p1.inGame = false;
         p2.inGame = false;
     }

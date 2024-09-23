@@ -3,23 +3,23 @@ package main;
 import java.util.Random;
 
 public class Board {
-    static int[][] grid = new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    static char[] _grid = new char[] {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-    static char[] keyboard = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
+    int[][] grid = new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    char[] _grid = new char[] {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+    char[] keyboard = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
 
-    static boolean IsValidMove(final int x, final int y){
+    boolean IsValidMove(final int x, final int y){
         return grid[x][y] == 0;
     }
 
-    static boolean IsValidMove(final int... xy){
+    boolean IsValidMove(final int... xy){
         return grid[xy[0]][xy[1]] == 0;
     }
 
-    static boolean IsValidMove(final int x){
+    boolean IsValidMove(final int x){
         return _grid[x] == ' ';
     }
 
-    static boolean IsWinMove(final int x, final int y, final boolean p1_move_flag){
+    boolean IsWinMove(final int x, final int y, final boolean p1_move_flag){
         if(!IsValidMove(x, y))return false;
 
         grid[x][y] = p1_move_flag ? 1 : 2;
@@ -44,11 +44,11 @@ public class Board {
         return false;
     }
 
-    static boolean IsWinMove(final int[] xy, final boolean p1_move_flag){
+    boolean IsWinMove(final int[] xy, final boolean p1_move_flag){
         return IsWinMove(xy[0], xy[1], p1_move_flag);
     }
 
-    static boolean IsWinMove(final int x, final boolean p1_move_flag){
+    boolean IsWinMove(final int x, final boolean p1_move_flag){
         return switch (x){
             case 0 -> IsWinMove(0, 0, p1_move_flag);
             case 1 -> IsWinMove(0, 1, p1_move_flag);
@@ -63,7 +63,7 @@ public class Board {
         };
     }
 
-    static int[] GetXYByNum(final int num){
+    int[] GetXYByNum(final int num){
         return switch (num) {
             case 0 -> new int[]{0, 0};
             case 1 -> new int[]{0, 1};
@@ -78,15 +78,15 @@ public class Board {
         };
     }
 
-    static int GetNumByXY(final int x, final int y){
+    int GetNumByXY(final int x, final int y){
         return 3 * x + y;
     }
 
-    static int GetNumByXY(final int... xy){
+    int GetNumByXY(final int... xy){
         return 3 * xy[0] + xy[1];
     }
 
-    static String GetPossibleMoves(){
+    String GetPossibleMoves(){
         String answer = "";
         for(int i = 0; i < 9; ++i)
             if(IsValidMove(GetXYByNum(i)))
@@ -95,21 +95,21 @@ public class Board {
         return answer;
     }
 
-    static void MakeMove(final int x, final int y, final boolean p1_move_flag){
+    void MakeMove(final int x, final int y, final boolean p1_move_flag){
         grid[x][y] = p1_move_flag ? 1 : 2;
         _grid[GetNumByXY(x, y)] = p1_move_flag ? 'X' : 'O';
         keyboard[GetNumByXY(x, y)] = ' ';
     }
 
-    static void MakeMove(final int[] xy, final boolean p1_move_flag){
+    void MakeMove(final int[] xy, final boolean p1_move_flag){
         MakeMove(xy[0], xy[1], p1_move_flag);
     }
 
-    static void MakeMove(final int x, final boolean p1_move_flag){
+    void MakeMove(final int x, final boolean p1_move_flag){
         MakeMove(GetXYByNum(x), p1_move_flag);
     }
 
-    static boolean MakeMove(){
+    boolean MakeMove(){
         String moves = GetPossibleMoves();
         String needed_moves = "";
         for(char c : moves.toCharArray()){
@@ -125,12 +125,17 @@ public class Board {
         return game_over_flag;
     }
 
-    static void PrintGrid(){
+    void PrintGrid(){
         System.out.printf("  %s  |  %s  |  %s         %s  |  %s  |  %s  %n-----------------     -----------------%n  %s  |  %s  |  %s         %s  |  %s  |  %s  %n-----------------     -----------------%n  %s  |  %s  |  %s         %s  |  %s  |  %s  %n%n",
                 _grid[0], _grid[1], _grid[2], keyboard[0], keyboard[1], keyboard[2], _grid[3], _grid[4], _grid[5], keyboard[3], keyboard[4], keyboard[5], _grid[6], _grid[7], _grid[8], keyboard[6], keyboard[7], keyboard[8]);
     }
 
-    static boolean GameOverAction(final int x, final boolean p1_move_flag){
+    String GetGrid(){
+        return String.format("  %s  |  %s  |  %s         %s  |  %s  |  %s  %n-----------------     -----------------%n  %s  |  %s  |  %s         %s  |  %s  |  %s  %n-----------------     -----------------%n  %s  |  %s  |  %s         %s  |  %s  |  %s       leave(9)%n%n",
+                _grid[0], _grid[1], _grid[2], keyboard[0], keyboard[1], keyboard[2], _grid[3], _grid[4], _grid[5], keyboard[3], keyboard[4], keyboard[5], _grid[6], _grid[7], _grid[8], keyboard[6], keyboard[7], keyboard[8]);
+    }
+
+    boolean GameOverAction(final int x, final boolean p1_move_flag){
         if(IsWinMove(x, p1_move_flag))
             System.out.println(p1_move_flag ? "You win!" : "You lost!");
         else if(GetPossibleMoves().length() == 1)
@@ -139,7 +144,7 @@ public class Board {
         return true;
     }
 
-    static void NewGame(){
+    void NewGame(){
         grid = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         _grid = new char[] {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         keyboard = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
